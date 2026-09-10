@@ -3,14 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_notes/firebase_options.dart';
 
-class LoginView extends StatefulWidget {
+class RegisterView extends StatefulWidget {
   const new({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
 
   late final TextEditingController _email;
   late final TextEditingController _password;
@@ -33,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title : const Text("Login"),
+        title : const Text("Register"),
       ),
       body: FutureBuilder(
         future: Firebase.initializeApp(
@@ -68,25 +68,25 @@ class _LoginViewState extends State<LoginView> {
           
                   final email = _email.text;
                   final password = _password.text;
-
                   try {
-                    final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email, 
-                      password: password
-                      );
-                  }
-
-                  on FirebaseAuthException catch(e){
-                    if(e.code == "user-not-found"){
-                      print("User not found");
+                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: email, 
+                    password: password
+                    );
+                  } on FirebaseAuthException catch (e){
+                    if (e.code == "weak-password"){
+                      print("Weak password");
                     }
-                    else if (e.code == "wrong-password"){
-                      print("Wrong password");
+                    else if (e.code == "email_already_in_use"){
+                      print("Email already in use");
                     }
-                  }
+                    else if (e.code == "invalid-email"){
+                      print("Invalid email");
+                    }
 
+                  }
                 }, 
-                child: const Text("Login")),
+                child: const Text("Register")),
             ],
           );
 
@@ -100,9 +100,4 @@ class _LoginViewState extends State<LoginView> {
       )
     );
   }
-
 }
-
-  
-
-
