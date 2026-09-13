@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_notes/firebase_options.dart';
 
 class RegisterView extends StatefulWidget {
-  const new({super.key});
+  const RegisterView({super.key});
 
   @override
   State<RegisterView> createState() => _RegisterViewState();
@@ -77,7 +77,7 @@ class _RegisterViewState extends State<RegisterView> {
                     if (e.code == "weak-password"){
                       print("Weak password");
                     }
-                    else if (e.code == "email_already_in_use"){
+                    else if (e.code == "email-already-in-use"){
                       print("Email already in use");
                     }
                     else if (e.code == "invalid-email"){

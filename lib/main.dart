@@ -7,7 +7,7 @@ void main() {
   runApp(MaterialApp(  
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: false ,
       ),
       home: const HomePage(),
@@ -15,7 +15,7 @@ void main() {
 }
 
 class HomePage extends StatelessWidget {
-  const new({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +31,10 @@ class HomePage extends StatelessWidget {
           switch(asyncSnapshot.connectionState)
           {
             case ConnectionState.done :
+
+              if(asyncSnapshot.hasError){
+                return Center(child : Text("Error: ${asyncSnapshot.error}"),);
+              }
               return const Text("Done");
 
           default :

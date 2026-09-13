@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_notes/firebase_options.dart';
 
 class LoginView extends StatefulWidget {
-  const new({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();
