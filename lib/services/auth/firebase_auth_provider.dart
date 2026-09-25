@@ -4,7 +4,7 @@ import "package:my_notes/services/auth/auth_user.dart";
 import "package:my_notes/services/auth/auth_provider.dart";
 import "package:my_notes/services/auth/auth_exceptions.dart";
 
-import "package:firebase_auth/firebase_auth.dart" show FirebaseAuth, User, FirebaseAuthException;
+import "package:firebase_auth/firebase_auth.dart" show FirebaseAuth, FirebaseAuthException;
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
@@ -47,7 +47,7 @@ class FirebaseAuthProvider implements AuthProvider {
   AuthUser? get currentUser {
     final user =  FirebaseAuth.instance.currentUser;
     if(user != null){
-      return AuthUser.FromFirebase(user);
+      return AuthUser.fromFirebase(user);
     }
     else{
       return null;

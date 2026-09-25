@@ -5,7 +5,7 @@ import "package:my_notes/views/login_view.dart";
 import "package:my_notes/views/notes_view.dart";
 import "package:my_notes/views/register_view.dart";
 import "package:my_notes/views/verify_email_view.dart";
-
+ 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
