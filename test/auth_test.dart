@@ -3,7 +3,46 @@ import "package:my_notes/services/auth/auth_provider.dart";
 import "package:my_notes/services/auth/auth_user.dart";
 import "package:test/test.dart";
 
-void main () {}
+void main () {
+  group("Mock Authentication", (){
+    final provider = MockAuthProvider();
+
+    test("Should not be initialized to begin with", (){
+      expect(provider.isIntialized, false);
+    }); 
+
+    test("Cannot log out if not intialized", (){
+      expect(provider.logOut(), 
+      throwsA(const TypeMatcher<NotInitializedException>())
+      );
+    });
+
+    test("Should be able to be intialized", () async {
+      await provider.intialize();
+      expect(provider.isIntialized, true);
+    });
+
+    test("User should be null after intialization", (){
+      expect(provider.currentUser, null);
+    });
+
+    test("Should be able to initilize in less than 2 seconds", () async {
+      await provider.intialize();
+      expect(provider.isIntialized, true);
+    }, timeout: const Timeout(Duration(seconds: 2)));
+
+    test("Create user should delegate to LogIn function", () async {
+      final badEmailUser = provider.createUser(
+        email: "foo@bar.com",
+        password: "anypassword"
+      );
+
+      expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
+
+    });
+
+  });
+}
 
 class NotInitializedException implements Exception {}
 
