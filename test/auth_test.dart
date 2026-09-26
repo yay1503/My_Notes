@@ -39,6 +39,38 @@ void main () {
 
       expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
 
+      final badPasswordUser = provider.createUser(
+        email: "someone@bar.com",
+        password: "foobar",
+      );
+
+      expect(badPasswordUser, throwsA(const TypeMatcher<WrongPasswordAuthException>()));
+
+      final user = await provider.createUser(
+        email: "foo",
+        password: "bar",
+      );
+
+      expect(provider.currentUser, user);
+      expect(user.isEmailVerified, false);
+
+    });
+
+    test("Logged in user should be able to get verified", () async {
+      await provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.isEmailVerified, true);
+    });
+
+    test("Should be able to log out and log in again", () async {
+      await provider.logOut();
+      await provider.logIn(
+        email: "email",
+        password: "password"
+      );
+      final user = provider.currentUser;
+      expect(user, isNotNull);
     });
 
   });
