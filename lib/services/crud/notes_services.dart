@@ -9,10 +9,100 @@ class DatabaseIsNotOpen implements Exception {}
 class CouldNotDeleteUser implements Exception {}
 class UserAlreadyExists implements Exception {}
 class CouldNotFindUser implements Exception {}
+class CouldNotDeleteNote implements Exception {}
+class COuldNotFindNote implements Exception {}
+class CouldNotUpdateNote implements Exception {}
 
 class NotesService {
 
   Database? _db;
+
+  Future<DatabaseNote> updateNote({required DatabaseNote note, required String text})async {
+    final db = _getDatabaseOrThrow();
+
+    await getNote(id: note.id);
+
+    final updatesCount = await db.update(noteTable,{
+      textColumn : text,
+      isSyncedWithCloudColumn : 0,
+    });
+
+    if(updatesCount == 0){
+      throw CouldNotUpdateNote();
+    }
+    else{
+      return await getNote(id: note.id);
+    }
+  }
+ 
+  Future<Iterable<DatabaseNote>> getAllNotes() async {
+
+    final db = _getDatabaseOrThrow();
+    final notes = await db.query(noteTable);
+
+    return notes.map((n) => DatabaseNote.fromRow(n));
+
+  }
+ 
+  Future<DatabaseNote> getNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final notes = await db.query(
+      noteTable,
+      limit: 1,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    if(notes.isEmpty){
+      throw CouldNotFindUser();
+    }
+    else{
+      return DatabaseNote.fromRow(notes.first);
+    }
+  }
+
+  Future<int> deleteAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    return  await db.delete(noteTable);
+  }
+
+  Future<void> deleteNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount = await db.delete(
+      noteTable,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    if(deletedCount != 1){
+      throw CouldNotDeleteNote();
+    }
+  }
+
+  Future<DatabaseNote> createNote({required DatabaseUser owner}) async {
+    final db = _getDatabaseOrThrow();
+
+    final dbUser = await getUser (email: owner.email);
+    if (dbUser != owner) {
+      throw CouldNotFindUser();
+    }
+
+    const text = "";
+
+    final noteId = await db.insert(noteTable, {
+      userIdColumn: owner.id,
+      textColumn: text,
+      isSyncedWithCloudColumn: 1,
+    });
+
+    final note = DatabaseNote(
+      id: noteId,
+      userId: owner.id,
+      text: text,
+      isSyncedWithCloud: true,
+    );
+
+    return note;
+  }
 
   Future<DatabaseUser> getUser({required String email}) async {
     final db = _getDatabaseOrThrow();
@@ -135,20 +225,20 @@ class DatabaseUser {
 
 }
 
-class DatabaseNode {
+class DatabaseNote {
   final int id;
   final int userId;
   final String text;
   final bool isSyncedWithCloud;
 
-  const DatabaseNode({
+  const DatabaseNote({
     required this.id,
     required this.userId,
     required this.text,
     required this.isSyncedWithCloud,
   });
 
-  DatabaseNode.fromRow(Map<String, Object?> map)
+  DatabaseNote.fromRow(Map<String, Object?> map)
       : id = map[idcolumn] as int,
         userId = map[userIdColumn] as int,
         text = map[textColumn] as String,
@@ -158,7 +248,7 @@ class DatabaseNode {
   String toString() => "Note, ID = $id, User ID = $userId, Text = $text, Is Synced = $isSyncedWithCloud";
 
   @override
-  bool operator ==(covariant DatabaseNode other) => id == other.id;
+  bool operator ==(covariant DatabaseNote other) => id == other.id;
 
   @override
   int get hashCode => id.hashCode;
