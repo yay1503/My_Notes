@@ -13,6 +13,8 @@ class NotesService {
 
   final _notesStreamController = StreamController<List<DatabaseNote>>.broadcast();
 
+  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
+
   Future<DatabaseUser> getOrCreateUser({required String email}) async{
     try {
       final user = await getUser(email: email);
@@ -319,11 +321,11 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
                                 "email"	TEXT NOT NULL UNIQUE,
                                 PRIMARY KEY("id" AUTOINCREMENT)
                               ); ''';
-const createNoteTable = '''CREATE TABLE "note" (
+const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
                                 "id"	INTEGER NOT NULL,
                                 "user_id"	INTEGER NOT NULL,
                                 "text"	TEXT,
-                                "is_synced_with_server"	INTEGER DEFAULT 0,
+                                "is_synced_with_cloud"	INTEGER DEFAULT 0,
                                 PRIMARY KEY("id" AUTOINCREMENT),
                                 FOREIGN KEY("user_id") REFERENCES "user"("id")
                               ); ''';
