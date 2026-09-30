@@ -31,8 +31,14 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar : AppBar(
-        title : const Text("Main UI"),
+        title : const Text("Your Notes"),
         actions : [
+          IconButton(
+            onPressed : () {
+              Navigator.of(context).pushNamed(newNoteRoute);
+            },
+            icon : const Icon(Icons.add)
+          ),
           PopupMenuButton<MenuAction>(
             onSelected : (value) async {
               switch(value) {
@@ -63,7 +69,19 @@ class _NotesViewState extends State<NotesView> {
         builder :(context,snapshot) {
           switch(snapshot.connectionState) {
             case ConnectionState.done :
-            return const Text("You are logged in");
+              return StreamBuilder(
+                stream : _notesService.allNotes,
+                builder : (context , snapshot) {
+                  switch(snapshot.connectionState) {
+                    case ConnectionState.waiting :
+                      return const Text("Loading...");
+
+                    default :
+                     return CircularProgressIndicator();
+                  }
+
+                }
+              );
 
             default : 
               return const CircularProgressIndicator();
