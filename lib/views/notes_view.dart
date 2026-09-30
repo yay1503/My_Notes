@@ -19,13 +19,11 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     _notesService = NotesService();
-    _notesService.open();
     super.initState();
   }
 
   @override
   void dispose() {
-    _notesService.close();
     super.dispose();
   }
 

@@ -41,8 +41,11 @@ class NotesService {
 
     final updatesCount = await db.update(noteTable,{
       textColumn : text,
-      isSyncedWithCloudColumn : 0,
-    });
+      isSyncedWithCloudColumn : 1,
+      },
+      where : "id = ?",
+      whereArgs : [note.id],
+    );
 
     if(updatesCount == 0){
       throw CouldNotUpdateNote();
@@ -68,6 +71,7 @@ class NotesService {
   }
  
   Future<DatabaseNote> getNote({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final notes = await db.query(
       noteTable,
@@ -308,7 +312,7 @@ class DatabaseNote {
 
 }
 
-const noteTable = "notes";
+const noteTable = "note";
 const userTable = "user";
 const dbName = "notes.db";
 const idcolumn = "id";
