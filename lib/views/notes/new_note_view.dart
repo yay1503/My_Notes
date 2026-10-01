@@ -23,7 +23,7 @@ class _NewNoteViewState extends State<NewNoteView> {
     }
     final currentUser = AuthService.firebase().currentUser!;
     final email = currentUser.email!;
-    final owner = await _notesService.getUser(email: email);
+    final owner = await _notesService.getOrCreateUser(email: email);
 
     return await _notesService.createNote(owner: owner);
 
@@ -83,7 +83,29 @@ class _NewNoteViewState extends State<NewNoteView> {
       appBar : AppBar(
         title : const Text("New Note"),
       ),
-      body : const Text("New Note"),
+      body : FutureBuilder(
+        future : createOrGetExistingNote(),
+        builder : (context, snapshot) {
+          switch(snapshot.connectionState) {
+            case ConnectionState.done :
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              _note = snapshot.data as DatabaseNote;
+              _setupTextControllerListener();
+              return TextField(
+                controller: _textController,
+                keyboardType : TextInputType.multiline,
+                maxLines : null,
+                decoration : const InputDecoration(
+                  hintText : "Start typing your note...",
+                ),
+              );
+            default :
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
