@@ -1,15 +1,22 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import "package:my_notes/constants/routes.dart";
 import "package:my_notes/services/auth/auth_service.dart";
 import "package:my_notes/views/login_view.dart";
-import "package:my_notes/views/notes/new_note_view.dart";
+import "package:my_notes/views/notes/create_update_note_view.dart";
 import "package:my_notes/views/notes/notes_view.dart";
 import "package:my_notes/views/register_view.dart";
 import "package:my_notes/views/verify_email_view.dart";
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
  
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize FFI database factory for desktop platforms
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
   runApp(MaterialApp(  
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -22,7 +29,7 @@ void main() {
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
-        newNoteRoute: (context) => const NewNoteView(),
+        createUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       }
     ),);
 }

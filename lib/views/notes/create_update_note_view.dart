@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:my_notes/services/auth/auth_service.dart';
 import 'package:my_notes/services/crud/notes_services.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({super.key});
+class CreateUpdateNoteView extends StatefulWidget {
+  const CreateUpdateNoteView({super.key});
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateUpdateNoteView> createState() => _NewNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _NewNoteViewState extends State<CreateUpdateNoteView> {
 
   DatabaseNote? _note;
   late final NotesService _notesService;
