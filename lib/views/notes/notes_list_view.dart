@@ -10,12 +10,29 @@ class NotesListView extends StatelessWidget {
 
   const NotesListView({super.key, required this.notes, required this.onDeleteNote});
 
-  
+
 
   @override
   Widget build(BuildContext context) {
-     return Container (
-
-    );
+     return ListView.builder(
+                          itemCount : notes.length,
+                          itemBuilder : (context, index) {
+                            final note = notes[index];
+                            return ListTile(
+                              title : Text(
+                                note.text,
+                                maxLines : 1,
+                                softWrap : true,
+                                overflow : TextOverflow.ellipsis,
+                                ),
+                                trailing : IconButton(
+                                  onPressed : (){
+                                    final shouldDelete = await showDeleteDialog(context);
+                                  },
+                                  icon : Icon(Icons.delete),
+                                )
+                            );
+                          }
+                        );
   }
 }
